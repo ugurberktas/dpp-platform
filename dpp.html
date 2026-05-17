@@ -184,6 +184,24 @@
       color: #1f2937;
       border-color: #9ca3af;
     }
+
+    .btn-qr-download {
+      display: inline-block;
+      background-color: #16a34a;
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 20px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: background-color 0.2s;
+    }
+
+    .btn-qr-download:hover {
+      background-color: #15803d;
+    }
   </style>
 </head>
 <body>
@@ -359,6 +377,9 @@
             <div class="qr-section">
               <h3 class="qr-title">Bu Ürünün QR Kodu</h3>
               <div class="qr-box" id="qrcode"></div>
+              <div style="margin-top: 16px;">
+                <button class="btn-qr-download" onclick="qrKodIndir('${ad}')">⬇ QR Kodu İndir</button>
+              </div>
               <p class="qr-footer">QR kodu okutarak bu sayfaya ulaşabilirsiniz</p>
             </div>
           </div>
@@ -383,6 +404,40 @@
         `;
       }
     }
+
+    window.qrKodIndir = function(urunAdi) {
+      const qrcodeContainer = document.getElementById('qrcode');
+      if (!qrcodeContainer) return;
+
+      const canvas = qrcodeContainer.querySelector('canvas');
+      const img = qrcodeContainer.querySelector('img');
+
+      let dataUrl = '';
+
+      if (canvas) {
+        dataUrl = canvas.toDataURL("image/png");
+      } else if (img && img.src) {
+        dataUrl = img.src;
+      }
+
+      if (!dataUrl) {
+        alert('QR kod henüz yüklenemedi. Lütfen tekrar deneyin.');
+        return;
+      }
+
+      const safeName = urunAdi
+        .toLowerCase()
+        .replace(/[^a-z0-9-]/g, '-')
+        .replace(/-+/g, '-')
+        .trim();
+
+      const downloadLink = document.createElement('a');
+      downloadLink.href = dataUrl;
+      downloadLink.download = `${safeName || 'urun'}-qr.png`;
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+    };
 
     // Run on load
     loadDPP();
