@@ -19,10 +19,11 @@
       background-color: #16a34a;
       color: #ffffff;
       text-align: center;
-      padding: 14px 20px;
-      font-size: 14px;
-      font-weight: 600;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      padding: 20px;
+      font-size: 15px;
+      font-weight: 700;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      letter-spacing: 0.02em;
     }
 
     .dpp-container {
@@ -32,48 +33,70 @@
       box-sizing: border-box;
     }
 
+    .card {
+      background-color: #ffffff;
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+    }
+
     .product-header {
-      margin-bottom: 20px;
+      margin-bottom: 24px;
     }
 
     .product-title {
-      font-size: 26px;
+      font-size: 28px;
       font-weight: 700;
       color: #111827;
-      margin: 0 0 4px 0;
+      margin: 0 0 8px 0;
       word-break: break-word;
     }
 
     .product-category {
-      font-size: 13px;
+      display: inline-block;
+      font-size: 12px;
       font-weight: 600;
-      color: #6b7280;
+      color: #4b5563;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.08em;
+      background-color: #f3f4f6;
+      padding: 4px 10px;
+      border-radius: 9999px;
     }
 
     .divider {
       border: 0;
       border-top: 1px solid #e5e7eb;
-      margin: 20px 0;
+      margin: 24px 0;
     }
 
     .info-list {
       display: flex;
       flex-direction: column;
-      gap: 16px;
     }
 
     .info-row {
       display: flex;
-      align-items: flex-start;
+      align-items: center;
       font-size: 15px;
       line-height: 1.5;
+      padding: 14px 12px;
+      border-bottom: 1px solid #f3f4f6;
+      border-radius: 8px;
+      transition: background-color 0.2s;
+    }
+
+    .info-row:last-child {
+      border-bottom: none;
+    }
+
+    .info-row:hover {
+      background-color: #f9fafb;
     }
 
     .info-icon {
       font-size: 18px;
-      margin-right: 12px;
+      margin-right: 16px;
       flex-shrink: 0;
       width: 24px;
       text-align: center;
@@ -92,19 +115,21 @@
     }
 
     .info-value {
-      font-weight: 600;
+      font-weight: 700;
       color: #1f2937;
     }
 
     .qr-section {
-      margin-top: 40px;
+      margin-top: 36px;
       text-align: center;
-      padding-top: 32px;
-      border-top: 1px dashed #d1d5db;
+      padding: 24px;
+      background-color: #f9fafb;
+      border-radius: 12px;
+      border: 1px dashed #e5e7eb;
     }
 
     .qr-title {
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 700;
       color: #374151;
       margin: 0 0 16px 0;
@@ -114,9 +139,9 @@
       display: inline-block;
       padding: 12px;
       background-color: #ffffff;
-      border-radius: 12px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      border-radius: 8px;
       border: 1px solid #e5e7eb;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     }
 
     .qr-box img {
@@ -140,6 +165,25 @@
       font-size: 16px;
       font-weight: 500;
     }
+
+    .btn-back {
+      display: inline-block;
+      background-color: #ffffff;
+      color: #4b5563;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      padding: 10px 18px;
+      font-size: 14px;
+      font-weight: 500;
+      text-decoration: none;
+      transition: background-color 0.2s, color 0.2s;
+    }
+
+    .btn-back:hover {
+      background-color: #f9fafb;
+      color: #1f2937;
+      border-color: #9ca3af;
+    }
   </style>
 </head>
 <body>
@@ -150,14 +194,24 @@
   </div>
 
   <!-- DPP Content -->
-  <main class="dpp-container" id="dpp-content">
-    <div class="card" id="loading-card" style="text-align: center; color: #6b7280;">
-      Yükleniyor...
+  <main class="dpp-container">
+    <div id="back-btn-container" style="display: none; margin-bottom: 20px;">
+      <a href="dashboard.html" class="btn-back">← Dashboard'a Dön</a>
+    </div>
+    <div id="dpp-content">
+      <div class="card" id="loading-card" style="text-align: center; color: #6b7280;">
+        Yükleniyor...
+      </div>
     </div>
   </main>
 
   <script type="module">
     import { supabase } from './supabase.js';
+
+    // Show back button if logged in
+    if (sessionStorage.getItem('giris') === 'true') {
+      document.getElementById('back-btn-container').style.display = 'block';
+    }
 
     async function loadDPP() {
       const container = document.getElementById('dpp-content');

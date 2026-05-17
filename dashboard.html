@@ -152,11 +152,13 @@
     .product-actions {
       margin-top: auto;
       padding-top: 20px;
+      display: flex;
+      gap: 12px;
     }
 
     .btn-view {
+      flex: 2;
       display: block;
-      width: 100%;
       text-align: center;
       box-sizing: border-box;
       text-decoration: none;
@@ -172,6 +174,28 @@
 
     .btn-view:hover {
       background-color: #e5e7eb;
+    }
+
+    .btn-delete {
+      flex: 1;
+      display: block;
+      text-align: center;
+      box-sizing: border-box;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      background-color: #ef4444;
+      color: #ffffff;
+      border: none;
+      padding: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: background-color 0.2s;
+    }
+
+    .btn-delete:hover {
+      background-color: #dc2626;
     }
 
     .state-message {
@@ -243,6 +267,7 @@
         urunler.forEach(urun => {
           const card = document.createElement('div');
           card.className = 'card product-card';
+          card.id = `urun-kart-${urun.id}`;
           
           const id = urun.id;
           const ad = urun.ad || urun.urun_adi || 'İsimsiz Ürün';
@@ -263,6 +288,7 @@
             
             <div class="product-actions">
               <a href="dpp.html?id=${id}" class="btn-view">DPP'yi Görüntüle</a>
+              <button class="btn-delete" onclick="urunSil('${id}')">Sil</button>
             </div>
           `;
           
@@ -274,6 +300,37 @@
         stateStatus.textContent = 'Bir hata oluştu. Lütfen sayfayı yenileyin.';
       }
     }
+
+    window.urunSil = async function(id) {
+      if (!confirm('Bu ürünü silmek istediğinize emin misiniz?')) {
+        return;
+      }
+
+      try {
+        const { error } = await supabase
+          .from('urunler')
+          .delete()
+          .eq('id', id);
+
+        if (error) {
+          throw error;
+        }
+
+        const cardElement = document.getElementById(`urun-kart-${id}`);
+        if (cardElement) {
+          cardElement.remove();
+        }
+
+        const urunListesi = document.getElementById('urun-listesi');
+        if (urunListesi.children.length === 0) {
+          urunListesi.innerHTML = '<div class="state-message" id="state-status">Henüz ürün eklenmedi.</div>';
+        }
+
+      } catch (err) {
+        console.error('Silme hatası:', err);
+        alert('Silme işlemi başarısız');
+      }
+    };
 
     // Run on load
     urunleriYukle();
