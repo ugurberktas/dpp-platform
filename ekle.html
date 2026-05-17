@@ -269,14 +269,13 @@
         submitBtn.textContent = 'Kaydediliyor...';
 
         const newProduct = {
-          ad: ad,
+          urun_adi: ad,
           kategori: kategori,
           malzeme: malzeme,
-          uretici: uretici,
+          uretici_adi: uretici,
           uretim_ulkesi: uretim_ulkesi,
           karbon_ayak_izi: karbon_ayak_izi || null,
-          sertifika: sertifika || null,
-          olusturma_tarihi: new Date().toISOString()
+          sertifika: sertifika || null
         };
 
         const { data, error } = await supabase
