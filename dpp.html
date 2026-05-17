@@ -409,34 +409,74 @@
       const qrcodeContainer = document.getElementById('qrcode');
       if (!qrcodeContainer) return;
 
-      const canvas = qrcodeContainer.querySelector('canvas');
+      const sourceCanvas = qrcodeContainer.querySelector('canvas');
       const img = qrcodeContainer.querySelector('img');
 
-      let dataUrl = '';
+      // Create a brand new canvas to draw a premium framed QR code
+      const exportCanvas = document.createElement('canvas');
+      const ctx = exportCanvas.getContext('2d');
 
-      if (canvas) {
-        dataUrl = canvas.toDataURL("image/png");
+      const padding = 24;
+      const qrSize = 180; // slightly larger for sharp printing
+      exportCanvas.width = qrSize + (padding * 2);
+      exportCanvas.height = qrSize + (padding * 2) + 32; // height for branding at bottom
+
+      // 1. Fill solid premium white background
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, exportCanvas.width, exportCanvas.height);
+
+      // 2. Draw subtle border
+      ctx.strokeStyle = '#e5e7eb';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(4, 4, exportCanvas.width - 8, exportCanvas.height - 8);
+
+      function drawAndDownload(sourceElement) {
+        // 3. Draw the QR code beautifully centered
+        ctx.drawImage(sourceElement, padding, padding, qrSize, qrSize);
+
+        // 4. Draw the product label & styling
+        ctx.fillStyle = '#111827'; // Dark slate
+        ctx.font = "bold 11px 'Inter', sans-serif";
+        ctx.textAlign = 'center';
+        
+        let label = urunAdi.length > 22 ? urunAdi.substring(0, 20) + '...' : urunAdi;
+        ctx.fillText(label.toUpperCase(), exportCanvas.width / 2, exportCanvas.height - 18);
+
+        // 5. Trigger download
+        const dataUrl = exportCanvas.toDataURL("image/png");
+        
+        const map = {
+          'ç': 'c', 'ğ': 'g', 'ı': 'i', 'ö': 'o', 'ş': 's', 'ü': 'u',
+          'Ç': 'c', 'Ğ': 'g', 'İ': 'i', 'Ö': 'o', 'Ş': 's', 'Ü': 'u', 'I': 'i'
+        };
+        let mappedName = urunAdi.split('').map(char => map[char] || char).join('');
+        const safeName = mappedName
+          .toLowerCase()
+          .replace(/[^a-z0-9-]/g, '-')
+          .replace(/-+/g, '-')
+          .replace(/^-|-$/g, '')
+          .trim();
+
+        const downloadLink = document.createElement('a');
+        downloadLink.href = dataUrl;
+        downloadLink.download = `${safeName || 'urun'}-qr.png`;
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+      }
+
+      if (sourceCanvas) {
+        drawAndDownload(sourceCanvas);
       } else if (img && img.src) {
-        dataUrl = img.src;
-      }
-
-      if (!dataUrl) {
+        const tempImg = new Image();
+        tempImg.crossOrigin = "anonymous";
+        tempImg.onload = function() {
+          drawAndDownload(tempImg);
+        };
+        tempImg.src = img.src;
+      } else {
         alert('QR kod henüz yüklenemedi. Lütfen tekrar deneyin.');
-        return;
       }
-
-      const safeName = urunAdi
-        .toLowerCase()
-        .replace(/[^a-z0-9-]/g, '-')
-        .replace(/-+/g, '-')
-        .trim();
-
-      const downloadLink = document.createElement('a');
-      downloadLink.href = dataUrl;
-      downloadLink.download = `${safeName || 'urun'}-qr.png`;
-      document.body.appendChild(downloadLink);
-      downloadLink.click();
-      document.body.removeChild(downloadLink);
     };
 
     // Run on load
