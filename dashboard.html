@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DPP Platform — Panel</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    if (sessionStorage.getItem('giris') !== 'true') {
+      window.location.href = 'index.html';
+    }
+  </script>
+  <style>
+    body {
+      background-color: #f4f6f9;
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    .navbar {
+      background-color: #ffffff;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      border-bottom: 1px solid #e5e7eb;
+      padding: 16px 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .navbar-container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .navbar-logo {
+      font-size: 18px;
+      font-weight: 700;
+      color: #111827;
+      text-decoration: none;
+    }
+
+    .btn-logout {
+      background-color: #ef4444;
+      color: #ffffff;
+      border-radius: 8px;
+      padding: 8px 16px;
+      border: none;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      font-size: 14px;
+    }
+    
+    .btn-logout:hover {
+      background-color: #dc2626;
+    }
+
+    .dashboard-container {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 24px;
+      box-sizing: border-box;
+    }
+
+    .header-section {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 32px;
+    }
+
+    .header-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: #111827;
+      margin: 0;
+    }
+
+    .btn-add {
+      background-color: #2563eb;
+      color: #ffffff;
+      border-radius: 8px;
+      padding: 10px 20px;
+      border: none;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      font-size: 14px;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+    }
+
+    .btn-add:hover {
+      background-color: #1d4ed8;
+    }
+
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    @media (max-width: 768px) {
+      .grid-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .product-card {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      box-sizing: border-box;
+    }
+
+    .product-name {
+      font-size: 18px;
+      font-weight: 700;
+      color: #111827;
+      margin: 0 0 6px 0;
+      word-break: break-word;
+    }
+
+    .product-category {
+      font-size: 12px;
+      font-weight: 600;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 16px;
+    }
+
+    .product-detail-item {
+      font-size: 14px;
+      color: #4b5563;
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+
+    .product-detail-label {
+      font-weight: 600;
+      color: #374151;
+    }
+
+    .product-actions {
+      margin-top: auto;
+      padding-top: 20px;
+    }
+
+    .btn-view {
+      display: block;
+      width: 100%;
+      text-align: center;
+      box-sizing: border-box;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      background-color: #f3f4f6;
+      color: #374151;
+      border: 1px solid #d1d5db;
+      padding: 10px;
+      border-radius: 8px;
+      transition: background-color 0.2s;
+    }
+
+    .btn-view:hover {
+      background-color: #e5e7eb;
+    }
+
+    .state-message {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 48px;
+      background-color: #ffffff;
+      border-radius: 12px;
+      color: #6b7280;
+      font-size: 16px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="navbar-container">
+      <a href="dashboard.html" class="navbar-logo">DPP Platform</a>
+      <button class="btn-logout" onclick="cikisYap()">Çıkış Yap</button>
+    </div>
+  </header>
+
+  <!-- Dashboard Content -->
+  <main class="dashboard-container">
+    <div class="header-section">
+      <h1 class="header-title">Ürünlerim</h1>
+      <a href="ekle.html" class="btn-add">Yeni Ürün Ekle</a>
+    </div>
+
+    <div class="grid-container" id="urun-listesi">
+      <div class="state-message" id="state-status">Yükleniyor...</div>
+    </div>
+  </main>
+
+  <script>
+    function cikisYap() {
+      sessionStorage.clear();
+      window.location.href = 'index.html';
+    }
+  </script>
+
+  <script type="module">
+    import { supabase } from './supabase.js';
+
+    async function urunleriYukle() {
+      const stateStatus = document.getElementById('state-status');
+      const urunListesi = document.getElementById('urun-listesi');
+
+      try {
+        const { data: urunler, error } = await supabase
+          .from('urunler')
+          .select('*')
+          .order('olusturma_tarihi', { ascending: false });
+
+        if (error) {
+          throw error;
+        }
+
+        if (!urunler || urunler.length === 0) {
+          stateStatus.textContent = 'Henüz ürün eklenmedi.';
+          return;
+        }
+
+        // Clear the loading message
+        urunListesi.innerHTML = '';
+
+        urunler.forEach(urun => {
+          const card = document.createElement('div');
+          card.className = 'card product-card';
+          
+          const id = urun.id;
+          const ad = urun.ad || urun.urun_adi || 'İsimsiz Ürün';
+          const kategori = urun.kategori || 'Belirtilmemiş';
+          const malzeme = urun.malzeme || 'Belirtilmemiş';
+          const uretimUlkesi = urun.uretim_ulkesi || urun.uretim_yeri || 'Belirtilmemiş';
+
+          card.innerHTML = `
+            <h2 class="product-name">${ad}</h2>
+            <div class="product-category">${kategori}</div>
+            
+            <div class="product-detail-item">
+              <span class="product-detail-label">Malzeme:</span> ${malzeme}
+            </div>
+            <div class="product-detail-item">
+              <span class="product-detail-label">Üretim Ülkesi:</span> ${uretimUlkesi}
+            </div>
+            
+            <div class="product-actions">
+              <a href="dpp.html?id=${id}" class="btn-view">DPP'yi Görüntüle</a>
+            </div>
+          `;
+          
+          urunListesi.appendChild(card);
+        });
+
+      } catch (error) {
+        console.error('Ürünler yüklenirken hata oluştu:', error);
+        stateStatus.textContent = 'Bir hata oluştu. Lütfen sayfayı yenileyin.';
+      }
+    }
+
+    // Run on load
+    urunleriYukle();
+  </script>
+
+</body>
+</html>

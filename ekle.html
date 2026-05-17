@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DPP Platform — Ürün Ekle</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    if (sessionStorage.getItem('giris') !== 'true') {
+      window.location.href = 'index.html';
+    }
+  </script>
+  <style>
+    body {
+      background-color: #f4f6f9;
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    .navbar {
+      background-color: #ffffff;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      border-bottom: 1px solid #e5e7eb;
+      padding: 16px 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .navbar-container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .navbar-logo {
+      font-size: 18px;
+      font-weight: 700;
+      color: #111827;
+      text-decoration: none;
+    }
+
+    .btn-logout {
+      background-color: #ef4444;
+      color: #ffffff;
+      border-radius: 8px;
+      padding: 8px 16px;
+      border: none;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      font-size: 14px;
+    }
+    
+    .btn-logout:hover {
+      background-color: #dc2626;
+    }
+
+    .form-container {
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 0 24px;
+      box-sizing: border-box;
+    }
+
+    .header-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: #111827;
+      margin: 0 0 24px 0;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 6px;
+    }
+
+    select {
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      padding: 10px;
+      width: 100%;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      background-color: #ffffff;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 12px;
+      margin-top: 32px;
+    }
+
+    .btn-submit {
+      flex: 1;
+      background-color: #2563eb;
+      color: #ffffff;
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 15px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .btn-submit:hover {
+      background-color: #1d4ed8;
+    }
+
+    .btn-submit:disabled {
+      background-color: #93c5fd;
+      cursor: not-allowed;
+    }
+
+    .btn-cancel {
+      flex: 1;
+      background-color: #f3f4f6;
+      color: #374151;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 15px;
+      font-weight: 500;
+      text-decoration: none;
+      text-align: center;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .btn-cancel:hover {
+      background-color: #e5e7eb;
+    }
+
+    .error-alert {
+      display: none;
+      background-color: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #dc2626;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="navbar-container">
+      <a href="dashboard.html" class="navbar-logo">DPP Platform</a>
+      <button class="btn-logout" onclick="cikisYap()">Çıkış Yap</button>
+    </div>
+  </header>
+
+  <!-- Add Product Form -->
+  <main class="form-container">
+    <h1 class="header-title">Yeni Ürün Ekle</h1>
+    
+    <div class="card">
+      <div id="hata-mesaji" class="error-alert"></div>
+      
+      <form id="urun-formu">
+        <div class="form-group">
+          <label class="form-label" for="ad">Ürün Adı *</label>
+          <input type="text" id="ad" required placeholder="örn. Denim Ceket">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="kategori">Kategori *</label>
+          <select id="kategori" required>
+            <option value="" disabled selected>Kategori Seçiniz</option>
+            <option value="Tişört">Tişört</option>
+            <option value="Pantolon">Pantolon</option>
+            <option value="Gömlek">Gömlek</option>
+            <option value="Elbise">Elbise</option>
+            <option value="Ceket">Ceket</option>
+            <option value="Diğer">Diğer</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="malzeme">Malzeme Kompozisyonu *</label>
+          <input type="text" id="malzeme" required placeholder="%80 Pamuk, %20 Polyester">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="uretici">Üretici Adı *</label>
+          <input type="text" id="uretici" required placeholder="örn. Eko Tekstil A.Ş.">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="uretim_ulkesi">Üretim Ülkesi *</label>
+          <input type="text" id="uretim_ulkesi" required placeholder="örn. Türkiye">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="karbon_ayak_izi">Karbon Ayak İzi</label>
+          <input type="text" id="karbon_ayak_izi" placeholder="örn. 3.2 kg CO₂e">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="sertifika">Sertifika</label>
+          <input type="text" id="sertifika" placeholder="örn. GOTS, OEKO-TEX">
+        </div>
+
+        <div class="button-group">
+          <button type="button" id="btn-submit" class="btn-submit">Kaydet ve QR Oluştur</button>
+          <a href="dashboard.html" class="btn-cancel">İptal</a>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <script>
+    function cikisYap() {
+      sessionStorage.clear();
+      window.location.href = 'index.html';
+    }
+  </script>
+
+  <script type="module">
+    import { supabase } from './supabase.js';
+
+    const submitBtn = document.getElementById('btn-submit');
+    const errorAlert = document.getElementById('hata-mesaji');
+
+    submitBtn.addEventListener('click', async function(e) {
+      e.preventDefault();
+      console.log('kaydetme başladı');
+
+      // Clear previous error
+      errorAlert.style.display = 'none';
+      errorAlert.textContent = '';
+
+      // Get values
+      const ad = document.getElementById('ad').value.trim();
+      const kategori = document.getElementById('kategori').value;
+      const malzeme = document.getElementById('malzeme').value.trim();
+      const uretici = document.getElementById('uretici').value.trim();
+      const uretim_ulkesi = document.getElementById('uretim_ulkesi').value.trim();
+      const karbon_ayak_izi = document.getElementById('karbon_ayak_izi').value.trim();
+      const sertifika = document.getElementById('sertifika').value.trim();
+
+      // Validation
+      if (!ad || !kategori || !malzeme || !uretici || !uretim_ulkesi) {
+        errorAlert.textContent = 'Lütfen tüm zorunlu (*) alanları doldurun.';
+        errorAlert.style.display = 'block';
+        return;
+      }
+
+      try {
+        // Change button state
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Kaydediliyor...';
+
+        const newProduct = {
+          ad: ad,
+          kategori: kategori,
+          malzeme: malzeme,
+          uretici: uretici,
+          uretim_ulkesi: uretim_ulkesi,
+          karbon_ayak_izi: karbon_ayak_izi || null,
+          sertifika: sertifika || null,
+          olusturma_tarihi: new Date().toISOString()
+        };
+
+        const { data, error } = await supabase
+          .from('urunler')
+          .insert([newProduct])
+          .select();
+
+        if (error) {
+          throw error;
+        }
+
+        // Redirect to dashboard
+        window.location.href = 'dashboard.html';
+
+      } catch (err) {
+        console.log('Kaydetme hatası:', err);
+        errorAlert.textContent = 'Ürün kaydedilirken bir hata oluştu: ' + (err.message || 'Lütfen tekrar deneyin.');
+        errorAlert.style.display = 'block';
+        
+        // Reset button state
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Kaydet ve QR Oluştur';
+      }
+    });
+  </script>
+
+</body>
+</html>

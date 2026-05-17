@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dijital Ürün Pasaportu (DPP)</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <style>
+    body {
+      background-color: #f4f6f9;
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    .banner {
+      background-color: #16a34a;
+      color: #ffffff;
+      text-align: center;
+      padding: 14px 20px;
+      font-size: 14px;
+      font-weight: 600;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .dpp-container {
+      max-width: 600px;
+      margin: 32px auto 48px auto;
+      padding: 0 20px;
+      box-sizing: border-box;
+    }
+
+    .product-header {
+      margin-bottom: 20px;
+    }
+
+    .product-title {
+      font-size: 26px;
+      font-weight: 700;
+      color: #111827;
+      margin: 0 0 4px 0;
+      word-break: break-word;
+    }
+
+    .product-category {
+      font-size: 13px;
+      font-weight: 600;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .divider {
+      border: 0;
+      border-top: 1px solid #e5e7eb;
+      margin: 20px 0;
+    }
+
+    .info-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .info-row {
+      display: flex;
+      align-items: flex-start;
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .info-icon {
+      font-size: 18px;
+      margin-right: 12px;
+      flex-shrink: 0;
+      width: 24px;
+      text-align: center;
+    }
+
+    .info-content {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .info-label {
+      font-weight: 500;
+      color: #6b7280;
+      font-size: 13px;
+      margin-bottom: 2px;
+    }
+
+    .info-value {
+      font-weight: 600;
+      color: #1f2937;
+    }
+
+    .qr-section {
+      margin-top: 40px;
+      text-align: center;
+      padding-top: 32px;
+      border-top: 1px dashed #d1d5db;
+    }
+
+    .qr-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #374151;
+      margin: 0 0 16px 0;
+    }
+
+    .qr-box {
+      display: inline-block;
+      padding: 12px;
+      background-color: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      border: 1px solid #e5e7eb;
+    }
+
+    .qr-box img {
+      display: block;
+      margin: 0 auto;
+    }
+
+    .qr-footer {
+      font-size: 12px;
+      color: #9ca3af;
+      margin-top: 12px;
+    }
+
+    .error-container {
+      text-align: center;
+      padding: 48px 24px;
+      background-color: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      color: #dc2626;
+      font-size: 16px;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Banner -->
+  <div class="banner">
+    ✓ ESPR Uyumlu Dijital Ürün Pasaportu
+  </div>
+
+  <!-- DPP Content -->
+  <main class="dpp-container" id="dpp-content">
+    <div class="card" id="loading-card" style="text-align: center; color: #6b7280;">
+      Yükleniyor...
+    </div>
+  </main>
+
+  <script type="module">
+    import { supabase } from './supabase.js';
+
+    async function loadDPP() {
+      const container = document.getElementById('dpp-content');
+
+      // 1. Get ID parameter from URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const id = urlParams.get('id');
+
+      if (!id) {
+        container.innerHTML = `
+          <div class="error-container">
+            ⚠️ Geçersiz ürün parametresi.
+          </div>
+        `;
+        return;
+      }
+
+      try {
+        // 2. Fetch product from Supabase
+        const { data: urun, error } = await supabase
+          .from('urunler')
+          .select('*')
+          .eq('id', id)
+          .single();
+
+        if (error || !urun) {
+          container.innerHTML = `
+            <div class="error-container">
+              ⚠️ Ürün bulunamadı veya pasaport bilgileri mevcut değil.
+            </div>
+          `;
+          return;
+        }
+
+        // 3. Format Date
+        let formattedDate = '';
+        if (urun.olusturma_tarihi) {
+          const dateObj = new Date(urun.olusturma_tarihi);
+          if (!isNaN(dateObj.getTime())) {
+            formattedDate = dateObj.toLocaleDateString('tr-TR', {
+              day: 'numeric',
+              month: 'long',
+              year: 'numeric'
+            });
+          }
+        }
+
+        // 4. Render product card
+        const ad = urun.ad || urun.urun_adi || 'İsimsiz Ürün';
+        const kategori = urun.kategori || 'Belirtilmemiş';
+
+        // Prepare information rows dynamically
+        let infoRowsHtml = '';
+
+        if (urun.malzeme) {
+          infoRowsHtml += `
+            <div class="info-row">
+              <span class="info-icon">📦</span>
+              <div class="info-content">
+                <span class="info-label">Malzeme</span>
+                <span class="info-value">${urun.malzeme}</span>
+              </div>
+            </div>
+          `;
+        }
+
+        const uretici = urun.uretici || urun.uretici_adi;
+        if (uretici) {
+          infoRowsHtml += `
+            <div class="info-row">
+              <span class="info-icon">🏭</span>
+              <div class="info-content">
+                <span class="info-label">Üretici</span>
+                <span class="info-value">${uretici}</span>
+              </div>
+            </div>
+          `;
+        }
+
+        const uretimUlkesi = urun.uretim_ulkesi || urun.uretim_yeri;
+        if (uretimUlkesi) {
+          infoRowsHtml += `
+            <div class="info-row">
+              <span class="info-icon">🌍</span>
+              <div class="info-content">
+                <span class="info-label">Üretim Ülkesi</span>
+                <span class="info-value">${uretimUlkesi}</span>
+              </div>
+            </div>
+          `;
+        }
+
+        if (urun.karbon_ayak_izi) {
+          infoRowsHtml += `
+            <div class="info-row">
+              <span class="info-icon">🌱</span>
+              <div class="info-content">
+                <span class="info-label">Karbon Ayak İzi</span>
+                <span class="info-value">${urun.karbon_ayak_izi}</span>
+              </div>
+            </div>
+          `;
+        }
+
+        if (urun.sertifika) {
+          infoRowsHtml += `
+            <div class="info-row">
+              <span class="info-icon">🏅</span>
+              <div class="info-content">
+                <span class="info-label">Sertifika</span>
+                <span class="info-value">${urun.sertifika}</span>
+              </div>
+            </div>
+          `;
+        }
+
+        if (formattedDate) {
+          infoRowsHtml += `
+            <div class="info-row">
+              <span class="info-icon">📅</span>
+              <div class="info-content">
+                <span class="info-label">Kayıt Tarihi</span>
+                <span class="info-value">${formattedDate}</span>
+              </div>
+            </div>
+          `;
+        }
+
+        container.innerHTML = `
+          <div class="card">
+            <!-- Product Header -->
+            <div class="product-header">
+              <h1 class="product-title">${ad}</h1>
+              <span class="product-category">${kategori}</span>
+            </div>
+
+            <hr class="divider">
+
+            <!-- Information list -->
+            <div class="info-list">
+              ${infoRowsHtml}
+            </div>
+
+            <!-- QR code section -->
+            <div class="qr-section">
+              <h3 class="qr-title">Bu Ürünün QR Kodu</h3>
+              <div class="qr-box" id="qrcode"></div>
+              <p class="qr-footer">QR kodu okutarak bu sayfaya ulaşabilirsiniz</p>
+            </div>
+          </div>
+        `;
+
+        // 5. Generate QR Code
+        new QRCode(document.getElementById("qrcode"), {
+          text: window.location.href,
+          width: 150,
+          height: 150,
+          colorDark: "#111827",
+          colorLight: "#ffffff",
+          correctLevel: QRCode.CorrectLevel.M
+        });
+
+      } catch (err) {
+        console.error('DPP yüklenirken hata oluştu:', err);
+        container.innerHTML = `
+          <div class="error-container">
+            ⚠️ Bilgiler yüklenirken sistemsel bir hata oluştu.
+          </div>
+        `;
+      }
+    }
+
+    // Run on load
+    loadDPP();
+  </script>
+
+</body>
+</html>

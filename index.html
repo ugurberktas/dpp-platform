@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DPP Platform — Giriş</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <div class="container" style="margin-top: 80px;">
+    <div class="card">
+
+      <div style="text-align:center; margin-bottom: 32px;">
+        <h1 style="font-size: 24px; font-weight: 700; color: #111827; margin: 0;">DPP Platform</h1>
+        <p style="color: #6b7280; margin-top: 8px; font-size: 14px;">Dijital Ürün Pasaportu Yönetimi</p>
+      </div>
+
+      <div style="margin-bottom: 16px;">
+        <label style="display:block; font-size:14px; font-weight:500; color:#374151; margin-bottom:6px;">
+          Kullanıcı Adı
+        </label>
+        <input 
+          type="text" 
+          id="kullanici" 
+          placeholder="admin" 
+          style="border:1px solid #d1d5db; border-radius:8px; padding:10px 14px; width:100%; font-size:14px; box-sizing:border-box; font-family:Inter,sans-serif;"
+        >
+      </div>
+
+      <div style="margin-bottom: 24px;">
+        <label style="display:block; font-size:14px; font-weight:500; color:#374151; margin-bottom:6px;">
+          Şifre
+        </label>
+        <input 
+          type="password" 
+          id="sifre" 
+          placeholder="••••••••" 
+          style="border:1px solid #d1d5db; border-radius:8px; padding:10px 14px; width:100%; font-size:14px; box-sizing:border-box; font-family:Inter,sans-serif;"
+        >
+      </div>
+
+      <div id="hata" style="display:none; background:#fef2f2; border:1px solid #fecaca; color:#dc2626; padding:10px 14px; border-radius:8px; font-size:14px; margin-bottom:16px;">
+        Kullanıcı adı veya şifre hatalı.
+      </div>
+
+      <button 
+        onclick="girisYap()" 
+        style="background:#2563eb; color:white; border:none; border-radius:8px; padding:12px 20px; width:100%; font-size:15px; font-weight:600; cursor:pointer; font-family:Inter,sans-serif;"
+      >
+        Giriş Yap
+      </button>
+
+    </div>
+  </div>
+
+  <script type="module">
+    window.girisYap = function() {
+      const kullanici = document.getElementById('kullanici').value.trim()
+      const sifre = document.getElementById('sifre').value.trim()
+      const hata = document.getElementById('hata')
+
+      if (kullanici === 'admin' && sifre === 'admin123') {
+        sessionStorage.setItem('giris', 'true')
+        window.location.href = 'dashboard.html'
+      } else {
+        hata.style.display = 'block'
+      }
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') window.girisYap()
+    })
+  </script>
+
+</body>
+</html>
