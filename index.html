@@ -57,7 +57,7 @@
 
   <script type="module">
     // If already logged in, redirect to dashboard
-    if (sessionStorage.getItem('giris') === 'true') {
+    if (localStorage.getItem('giris') === 'true') {
       console.log('Already logged in, redirecting to dashboard...')
       window.location.replace('/dashboard')
     }
@@ -72,10 +72,10 @@
 
       if (kullanici === 'admin' && sifre === 'admin123') {
         console.log('Credentials valid, setting session...')
-        sessionStorage.setItem('giris', 'true')
+        localStorage.setItem('giris', 'true')
         console.log('Session set, redirecting to dashboard...')
         
-        // Use setTimeout to ensure sessionStorage is written
+        // Use setTimeout to ensure localStorage is written
         setTimeout(() => {
           window.location.replace('/dashboard')
         }, 100)

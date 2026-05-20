@@ -227,7 +227,7 @@
     import { supabase } from './supabase.js';
 
     // Show back button if logged in
-    if (sessionStorage.getItem('giris') === 'true') {
+    if (localStorage.getItem('giris') === 'true') {
       document.getElementById('back-btn-container').style.display = 'block';
     }
 

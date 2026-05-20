@@ -9,7 +9,7 @@
   <script>
     // Auth guard - check before page renders
     (function() {
-      if (sessionStorage.getItem('giris') !== 'true') {
+      if (localStorage.getItem('giris') !== 'true') {
         window.location.replace('/');
       } else {
         // Show page content only if authenticated
@@ -240,7 +240,7 @@
 
   <script>
     function cikisYap() {
-      sessionStorage.clear();
+      localStorage.clear();
       window.location.replace('/');
     }
   </script>
