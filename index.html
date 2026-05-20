@@ -58,18 +58,29 @@
   <script type="module">
     // If already logged in, redirect to dashboard
     if (sessionStorage.getItem('giris') === 'true') {
+      console.log('Already logged in, redirecting to dashboard...')
       window.location.replace('/dashboard')
     }
 
     window.girisYap = function() {
+      console.log('Login attempt started')
       const kullanici = document.getElementById('kullanici').value.trim()
       const sifre = document.getElementById('sifre').value.trim()
       const hata = document.getElementById('hata')
 
+      console.log('Username:', kullanici)
+
       if (kullanici === 'admin' && sifre === 'admin123') {
+        console.log('Credentials valid, setting session...')
         sessionStorage.setItem('giris', 'true')
-        window.location.replace('/dashboard')
+        console.log('Session set, redirecting to dashboard...')
+        
+        // Use setTimeout to ensure sessionStorage is written
+        setTimeout(() => {
+          window.location.replace('/dashboard')
+        }, 100)
       } else {
+        console.log('Invalid credentials')
         hata.style.display = 'block'
       }
     }
