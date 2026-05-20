@@ -7,10 +7,22 @@
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script>
-    if (sessionStorage.getItem('giris') !== 'true') {
-      window.location.replace('/');
-    }
+    // Auth guard - check before page renders
+    (function() {
+      if (sessionStorage.getItem('giris') !== 'true') {
+        window.location.replace('/');
+      } else {
+        // Show page content only if authenticated
+        document.documentElement.style.visibility = 'visible';
+      }
+    })();
   </script>
+  <style>
+    /* Hide page until auth check completes */
+    html {
+      visibility: hidden;
+    }
+  </style>
   <style>
     body {
       background-color: #f4f6f9;

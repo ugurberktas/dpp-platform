@@ -56,6 +56,11 @@
   </div>
 
   <script type="module">
+    // If already logged in, redirect to dashboard
+    if (sessionStorage.getItem('giris') === 'true') {
+      window.location.replace('/dashboard')
+    }
+
     window.girisYap = function() {
       const kullanici = document.getElementById('kullanici').value.trim()
       const sifre = document.getElementById('sifre').value.trim()
