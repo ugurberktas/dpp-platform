@@ -8,7 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script>
     if (sessionStorage.getItem('giris') !== 'true') {
-      window.location.href = 'index.html';
+      window.location.replace('/');
     }
   </script>
   <style>
@@ -215,7 +215,7 @@
   <!-- Navbar -->
   <header class="navbar">
     <div class="navbar-container">
-      <a href="dashboard.html" class="navbar-logo">DPP Platform</a>
+      <a href="/dashboard" class="navbar-logo">DPP Platform</a>
       <button class="btn-logout" onclick="cikisYap()">Çıkış Yap</button>
     </div>
   </header>
@@ -224,7 +224,7 @@
   <main class="dashboard-container">
     <div class="header-section">
       <h1 class="header-title">Ürünlerim</h1>
-      <a href="ekle.html" class="btn-add">Yeni Ürün Ekle</a>
+      <a href="/ekle" class="btn-add">Yeni Ürün Ekle</a>
     </div>
 
     <div class="grid-container" id="urun-listesi">
@@ -235,7 +235,7 @@
   <script>
     function cikisYap() {
       sessionStorage.clear();
-      window.location.href = 'index.html';
+      window.location.replace('/');
     }
   </script>
 
@@ -287,7 +287,7 @@
             </div>
             
             <div class="product-actions">
-              <a href="dpp.html?id=${id}" class="btn-view">DPP'yi Görüntüle</a>
+              <a href="/dpp?id=${id}" class="btn-view">DPP'yi Görüntüle</a>
               <button class="btn-delete" onclick="urunSil('${id}')">Sil</button>
             </div>
           `;

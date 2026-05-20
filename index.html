@@ -63,7 +63,7 @@
 
       if (kullanici === 'admin' && sifre === 'admin123') {
         sessionStorage.setItem('giris', 'true')
-        window.location.href = 'dashboard.html'
+        window.location.replace('/dashboard')
       } else {
         hata.style.display = 'block'
       }

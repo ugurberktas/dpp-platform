@@ -8,7 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script>
     if (sessionStorage.getItem('giris') !== 'true') {
-      window.location.href = 'index.html';
+      window.location.replace('/');
     }
   </script>
   <style>
@@ -162,7 +162,7 @@
   <!-- Navbar -->
   <header class="navbar">
     <div class="navbar-container">
-      <a href="dashboard.html" class="navbar-logo">DPP Platform</a>
+      <a href="/dashboard" class="navbar-logo">DPP Platform</a>
       <button class="btn-logout" onclick="cikisYap()">Çıkış Yap</button>
     </div>
   </header>
@@ -220,7 +220,7 @@
 
         <div class="button-group">
           <button type="button" id="btn-submit" class="btn-submit">Kaydet ve QR Oluştur</button>
-          <a href="dashboard.html" class="btn-cancel">İptal</a>
+          <a href="/dashboard" class="btn-cancel">İptal</a>
         </div>
       </form>
     </div>
@@ -229,7 +229,7 @@
   <script>
     function cikisYap() {
       sessionStorage.clear();
-      window.location.href = 'index.html';
+      window.location.replace('/');
     }
   </script>
 
@@ -288,7 +288,7 @@
         }
 
         // Redirect to dashboard
-        window.location.href = 'dashboard.html';
+        window.location.replace('/dashboard');
 
       } catch (err) {
         console.log('Kaydetme hatası:', err);
