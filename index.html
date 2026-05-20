@@ -59,7 +59,7 @@
     // If already logged in, redirect to dashboard
     if (localStorage.getItem('giris') === 'true') {
       console.log('Already logged in, redirecting to dashboard...')
-      window.location.replace('/dashboard')
+      window.location.replace('/dashboard.html')
     }
 
     window.girisYap = function() {
@@ -77,7 +77,7 @@
         
         // Use setTimeout to ensure localStorage is written
         setTimeout(() => {
-          window.location.replace('/dashboard')
+          window.location.replace('/dashboard.html')
         }, 100)
       } else {
         console.log('Invalid credentials')

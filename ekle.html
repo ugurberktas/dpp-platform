@@ -10,7 +10,7 @@
     // Auth guard - check before page renders
     (function() {
       if (localStorage.getItem('giris') !== 'true') {
-        window.location.replace('/');
+        window.location.replace('/index.html');
       } else {
         // Show page content only if authenticated
         document.documentElement.style.visibility = 'visible';
@@ -174,7 +174,7 @@
   <!-- Navbar -->
   <header class="navbar">
     <div class="navbar-container">
-      <a href="/dashboard" class="navbar-logo">DPP Platform</a>
+      <a href="/dashboard.html" class="navbar-logo">DPP Platform</a>
       <button class="btn-logout" onclick="cikisYap()">Çıkış Yap</button>
     </div>
   </header>
@@ -232,7 +232,7 @@
 
         <div class="button-group">
           <button type="button" id="btn-submit" class="btn-submit">Kaydet ve QR Oluştur</button>
-          <a href="/dashboard" class="btn-cancel">İptal</a>
+          <a href="/dashboard.html" class="btn-cancel">İptal</a>
         </div>
       </form>
     </div>
@@ -241,7 +241,7 @@
   <script>
     function cikisYap() {
       localStorage.clear();
-      window.location.replace('/');
+      window.location.replace('/index.html');
     }
   </script>
 
@@ -300,7 +300,7 @@
         }
 
         // Redirect to dashboard
-        window.location.replace('/dashboard');
+        window.location.replace('/dashboard.html');
 
       } catch (err) {
         console.log('Kaydetme hatası:', err);

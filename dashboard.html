@@ -10,7 +10,7 @@
     // Auth guard - check before page renders
     (function() {
       if (localStorage.getItem('giris') !== 'true') {
-        window.location.replace('/');
+        window.location.replace('/index.html');
       } else {
         // Show page content only if authenticated
         document.documentElement.style.visibility = 'visible';
@@ -227,7 +227,7 @@
   <!-- Navbar -->
   <header class="navbar">
     <div class="navbar-container">
-      <a href="/dashboard" class="navbar-logo">DPP Platform</a>
+      <a href="/dashboard.html" class="navbar-logo">DPP Platform</a>
       <button class="btn-logout" onclick="cikisYap()">Çıkış Yap</button>
     </div>
   </header>
@@ -236,7 +236,7 @@
   <main class="dashboard-container">
     <div class="header-section">
       <h1 class="header-title">Ürünlerim</h1>
-      <a href="/ekle" class="btn-add">Yeni Ürün Ekle</a>
+      <a href="/ekle.html" class="btn-add">Yeni Ürün Ekle</a>
     </div>
 
     <div class="grid-container" id="urun-listesi">
@@ -247,7 +247,7 @@
   <script>
     function cikisYap() {
       localStorage.clear();
-      window.location.replace('/');
+      window.location.replace('/index.html');
     }
   </script>
 
@@ -299,7 +299,7 @@
             </div>
             
             <div class="product-actions">
-              <a href="/dpp?id=${id}" class="btn-view">DPP'yi Görüntüle</a>
+              <a href="/dpp.html?id=${id}" class="btn-view">DPP'yi Görüntüle</a>
               <button class="btn-delete" onclick="urunSil('${id}')">Sil</button>
             </div>
           `;
